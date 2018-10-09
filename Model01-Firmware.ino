@@ -50,6 +50,8 @@
 
 #include <Kaleidoscope-Heatmap.h>
 
+#include <Kaleidoscope-Heatmap.h>
+
 // Support for Keyboardio's internal keyboard testing mode
 #include "Kaleidoscope-Model01-TestMode.h"
 
@@ -61,6 +63,8 @@
 
 // Support for USB quirks, like changing the key state report protocol
 #include "Kaleidoscope-USB-Quirks.h"
+
+#include "Conway.h"
 
 /** This 'enum' is a list of all the macros used by the Model 01's firmware
   * The names aren't particularly important. What is important is that each
@@ -411,6 +415,8 @@ KALEIDOSCOPE_INIT_PLUGINS(
 
   // The stalker effect lights up the keys you've pressed recently
   StalkerEffect,
+
+  ConwayEffect,
   
   HeatmapEffect,
 
@@ -465,11 +471,13 @@ void setup() {
   Kaleidoscope.setup();
 
   HeatmapEffect.activate();
+  ConwayEffect.activate();
   
   // While we hope to improve this in the future, the NumPad plugin
   // needs to be explicitly told which keymap layer is your numpad layer
   NumPad.numPadLayer = NUMPAD;
 
+  //AlphaSquare.color = CRGB(255, 0, 0);
   // We set the brightness of the rainbow effects to 150 (on a scale of 0-255)
   // This draws more than 500mA, but looks much nicer than a dimmer effect
   LEDRainbowEffect.brightness(150);
