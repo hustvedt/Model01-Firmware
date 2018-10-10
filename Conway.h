@@ -20,11 +20,11 @@ class Conway : public LEDMode {
 
  private:
   static uint32_t next_heatmap_comp_time_;
-  static uint8_t board1[ROWS][COLS];
-  static uint8_t board2[ROWS][COLS];
+  static uint8_t board1[ROWS * 3][COLS];
+  static uint8_t board2[ROWS * 3][COLS];
   static uint8_t (*board)[COLS];
   static uint8_t (*otherBoard)[COLS];
-  static cRGB computeColor(uint8_t v);
+  static cRGB computeColor(uint8_t r, uint8_t g, uint8_t b);
   static void stepBoard(void);
 };
 }

@@ -3,8 +3,8 @@
 
 namespace kaleidoscope {
 
-uint8_t Conway::board1[ROWS][COLS];
-uint8_t Conway::board2[ROWS][COLS];
+uint8_t Conway::board1[ROWS * 3][COLS];
+uint8_t Conway::board2[ROWS * 3][COLS];
 uint8_t (*Conway::board)[COLS] = board1;
 uint8_t (*Conway::otherBoard)[COLS] = board2;
 
@@ -17,7 +17,7 @@ void Conway::resetMap(void) {
   otherBoard = board2;
   // this method can be used as a way to work around an existing bug with a single key
   // getting special attention or if the user just wants a button to reset the map
-  for (uint8_t r = 0; r < ROWS; r++) {
+  for (uint8_t r = 0; r < ROWS * 3; r++) {
     for (uint8_t c = 0; c < COLS; c++) {
       board1[r][c] = 0;
       board2[r][c] = 0;
@@ -26,9 +26,8 @@ void Conway::resetMap(void) {
 }
 
 
-cRGB Conway::computeColor(uint8_t v) {
-  uint8_t c = v * 100;
-  return {c, 0, 0};
+cRGB Conway::computeColor(uint8_t r, uint8_t g, uint8_t b) {
+  return {r * 100, g * 100, b * 100};
 }
 
 EventHandlerResult Conway::onKeyswitchEvent(Key &mapped_key, byte row, byte col, uint8_t key_state) {
@@ -44,7 +43,9 @@ EventHandlerResult Conway::onKeyswitchEvent(Key &mapped_key, byte row, byte col,
     return EventHandlerResult::OK;
 
 
-  board[row][col] = 1;
+  board[row * 3][col] = 1;
+  board[row * 3 + 1][col] = 1;
+  board[row * 3 + 2][col] = 1;
 
   return EventHandlerResult::OK;
 }
@@ -67,10 +68,12 @@ void Conway::update(void) {
   // for each key
   for (uint8_t r = 0; r < ROWS; r++) {
     for (uint8_t c = 0; c < COLS; c++) {
-      uint8_t f = board[r][c];
+      uint8_t red = board[r * 3][c];
+      uint8_t green = board[r * 3 + 1][c];
+      uint8_t blue = board[r * 3 + 2][c];
 
       // set the LED color accordingly
-      ::LEDControl.setCrgbAt(r, c, computeColor(f));
+      ::LEDControl.setCrgbAt(r, c, computeColor(red, green, blue));
     }
   }
 
@@ -78,7 +81,7 @@ void Conway::update(void) {
 }
 void Conway::stepBoard(void) {
   // Loop through every cell
-  for (int8_t l = 0; l < ROWS; l++)
+  for (int8_t l = 0; l < ROWS * 3; l++)
   {
     for (int8_t m = 0; m < COLS; m++)
     {
@@ -87,7 +90,7 @@ void Conway::stepBoard(void) {
       for (int8_t i = -1; i <= 1; i++) {
         for (int8_t j = -1; j <= 1; j++) {
           if (i != 0 || j != 0) {
-            aliveNeighbours += board[(l + i + ROWS) % ROWS][(m + j + COLS) % COLS];
+            aliveNeighbours += board[(l + i + ROWS * 3) % (ROWS * 3)][(m + j + COLS) % COLS];
           }
         }
       }
